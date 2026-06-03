@@ -34,6 +34,17 @@ class Reserva {
 }
 
 // --- CLASE PRINCIPAL (GESTIÓN DE LOS ISSUES) ---
+SistemaHotel.prototype.bajaHuesped = function (dni) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    if (!huesped) throw new Error("Huésped no encontrado.");
+
+    const tieneReservasActivas = this.reservas.some(r => r.huesped.dni === dni && (r.estado === 'Confirmada' || r.estado === 'Activa'));
+    if (tieneReservasActivas) throw new Error("No se puede eliminar el huésped: Posee reservas o saldos activos.");
+
+    huesped.estado = 'Inactivo';
+    return "Huésped dado de baja (lógica) exitosamente.";
+
+/* Integrante 1 */
 function registrarHuesped(nombre, apellido, dni, email) {
     if (!nombre || !apellido || !dni || !email) throw new Error("Todos los campos son obligatorios.");
     if (this.huespedes.some(h => h.dni === dni)) throw new Error("El documento ingresado ya se encuentra registrado.");
@@ -61,4 +72,42 @@ function registrarHuesped(nombre, apellido, dni, email) {
         const reserva = new Reserva(codigoReserva, huesped, habitacion, fechaIn, fechaOut, total);
         this.reservas.push(reserva);
         return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
+SistemaHotel.prototype.modificarHuesped = function (dni, nuevosDatos) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    if (!huesped) throw new Error("Huésped no encontrado.");
+
+    if (nuevosDatos.nombre) huesped.nombre = nuevosDatos.nombre;
+    if (nuevosDatos.apellido) huesped.apellido = nuevosDatos.apellido;
+    if (nuevosDatos.email) huesped.email = nuevosDatos.email;
+    return "Datos del huésped actualizados correctamente.";
+};
+
+altaHabitacion(numero, tipo, precio, piso) {
+        if (!numero || !tipo || !precio || !piso) throw new Error("Faltan datos de la habitación.");
+        if (this.habitaciones.some(h => h.numero === numero)) throw new Error("El número de habitación ya existe.");
+        if (precio <= 0) throw new Error("El precio debe ser mayor a cero.");
+
+        this.habitaciones.push(new Habitacion(numero, tipo, precio, piso));
+        return "Habitación creada.";
+    }
+
+    cambiarEstadoHabitacion(numero, nuevoEstado) {
+        const hab = this.habitaciones.find(h => h.numero === numero);
+        if (!hab) throw new Error("Habitación no encontrada.");
+        
+        const estadosValidos = ['Disponible', 'Ocupada', 'Mantenimiento', 'Sucia'];
+        if (!estadosValidos.includes(nuevoEstado)) throw new Error("Estado inválido.");
+
+        hab.estado = nuevoEstado;
+        return `Estado de habitación ${numero} cambiado a ${nuevoEstado}.`;
+    }
+    
+    consultarDisponibilidad(fechaIn, fechaOut) {
+        if (!fechaIn || !fechaOut) throw new Error("Fechas obligatorias.");
+        const disponibles = this.habitaciones.filter(h => h.estado === 'Disponible');
+        
+        if (disponibles.length === 0) {
+            throw new Error("No se encontraron habitaciones disponibles para los criterios seleccionados.");
+        }
+        return disponibles;
     }
