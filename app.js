@@ -1,4 +1,45 @@
 // --- CLASE PRINCIPAL (GESTIÓN DE LOS ISSUES) ---
+class Huesped {
+    constructor(nombre, apellido, dni, email) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.email = email;
+        this.estado = 'Activo';
+    }
+}
+
+class Habitacion {
+    constructor(numero, tipo, precioNoche, piso) {
+        this.numero = numero;
+        this.tipo = tipo;
+        this.precioNoche = precioNoche;
+        this.piso = piso;
+        this.estado = 'Disponible';
+    }
+}
+
+class Reserva {
+    constructor(codigo, huesped, habitacion, fechaIn, fechaOut, total) {
+        this.codigo = codigo;
+        this.huesped = huesped;
+        this.habitacion = habitacion;
+        this.fechaIn = new Date(fechaIn + 'T00:00:00'); // Arreglo zona horaria
+        this.fechaOut = new Date(fechaOut + 'T00:00:00');
+        this.estado = 'Confirmada';
+        this.totalEstadia = total;
+        this.consumosExtras = [];
+    }
+}
+
+class SistemaHotel {
+    constructor() {
+        this.huespedes = [];
+        this.habitaciones = [];
+        this.reservas = [];
+        this.facturacionMes = [];
+    }
+}
 
 /* === Integrante 1 === */
 SistemaHotel.prototype.registrarHuesped = function (nombre, apellido, dni, email) {
@@ -157,51 +198,44 @@ document.getElementById('form-reserva').addEventListener('submit', function(e) {
         mensajeDiv.textContent = error.message;
     }
 });
-// --- CLASES BASE ---
-
 const hotel = new SistemaHotel();
-
 hotel.huespedes.push(new Huesped("Juan", "Perez", "12345678", "juan@mail.com"));
 hotel.habitaciones.push(new Habitacion("101", "Doble", 15000, 1));
 
-class SistemaHotel {
-    constructor() {
-        this.huespedes = [];
-        this.habitaciones = [];
-        this.reservas = [];
-        this.facturacionMes = [];
-    }
-}
+// 3.2 Lógica visual para los botones del menú lateral (Tabs)
+const menuButtons = document.querySelectorAll('.menu-btn');
+menuButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Le sacamos la clase 'active' a todos
+        menuButtons.forEach(btn => btn.classList.remove('active'));
+        // Se la ponemos solo al que clickeaste
+        this.classList.add('active');
+        
+        // Acá a futuro podrías ocultar/mostrar distintos formularios según qué botón toquen
+        console.log(`Navegando a: ${this.textContent}`); 
+    });
+});
 
-class Huesped {
-    constructor(nombre, apellido, dni, email) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dni = dni;
-        this.email = email;
-        this.estado = 'Activo';
-    }
-}
+// 3.3 Lógica del formulario de reservas
+const formReserva = document.getElementById('form-reserva');
 
-class Habitacion {
-    constructor(numero, tipo, precioNoche, piso) {
-        this.numero = numero;
-        this.tipo = tipo;
-        this.precioNoche = precioNoche;
-        this.piso = piso;
-        this.estado = 'Disponible'; // Disponible, Ocupada, Mantenimiento, Sucia
-    }
-}
+if (formReserva) { // Verificamos que el formulario exista en el HTML para evitar errores
+    formReserva.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const dni = document.getElementById('dni').value;
+        const hab = document.getElementById('habitacion').value;
+        const fIn = document.getElementById('fecha-in').value;
+        const fOut = document.getElementById('fecha-out').value;
+        const mensajeDiv = document.getElementById('mensaje-sistema');
 
-class Reserva {
-    constructor(codigo, huesped, habitacion, fechaIn, fechaOut, total) {
-        this.codigo = codigo;
-        this.huesped = huesped;
-        this.habitacion = habitacion;
-        this.fechaIn = new Date(fechaIn);
-        this.fechaOut = new Date(fechaOut);
-        this.estado = 'Confirmada'; // Confirmada, Activa, Cancelada, Finalizada
-        this.totalEstadia = total;
-        this.consumosExtras = [];
-    }
+        try {
+            const resultado = hotel.crearReserva(dni, hab, fIn, fOut);
+            mensajeDiv.style.color = "#2e7d32"; 
+            mensajeDiv.textContent = resultado;
+        } catch (error) {
+            mensajeDiv.style.color = "#d9534f"; 
+            mensajeDiv.textContent = error.message;
+        }
+    });
 }
