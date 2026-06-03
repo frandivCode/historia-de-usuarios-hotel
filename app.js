@@ -84,3 +84,13 @@ altaHabitacion(numero, tipo, precio, piso) {
         hab.estado = nuevoEstado;
         return `Estado de habitación ${numero} cambiado a ${nuevoEstado}.`;
     }
+    
+    consultarDisponibilidad(fechaIn, fechaOut) {
+        if (!fechaIn || !fechaOut) throw new Error("Fechas obligatorias.");
+        const disponibles = this.habitaciones.filter(h => h.estado === 'Disponible');
+        
+        if (disponibles.length === 0) {
+            throw new Error("No se encontraron habitaciones disponibles para los criterios seleccionados.");
+        }
+        return disponibles;
+    }
