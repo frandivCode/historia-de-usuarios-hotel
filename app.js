@@ -43,3 +43,12 @@ SistemaHotel.prototype.modificarHuesped = function (dni, nuevosDatos) {
     if (nuevosDatos.email) huesped.email = nuevosDatos.email;
     return "Datos del huésped actualizados correctamente.";
 };
+function registrarHuesped(nombre, apellido, dni, email) {
+    if (!nombre || !apellido || !dni || !email) throw new Error("Todos los campos son obligatorios.");
+    if (this.huespedes.some(h => h.dni === dni)) throw new Error("El documento ingresado ya se encuentra registrado.");
+    if (!email.includes('@')) throw new Error("Formato de correo inválido.");
+
+    const nuevoHuesped = new Huesped(nombre, apellido, dni, email);
+    this.huespedes.push(nuevoHuesped);
+    return "Huésped registrado exitosamente.";
+}
