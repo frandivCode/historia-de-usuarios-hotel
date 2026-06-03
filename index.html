@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Hotel - Gestión</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h1 class="logo">Grand Hotel</h1>
+            <nav class="menu">
+                <button class="menu-btn active">Recepción</button>
+                <button class="menu-btn">Habitaciones</button>
+                <button class="menu-btn">Huéspedes</button>
+                <button class="menu-btn">Facturación</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h2>Panel de Recepción</h2>
+                <span class="user-info">Hola, Administrador</span>
+            </header>
+
+            <section class="dashboard">
+                <div class="card">
+                    <h3>Nueva Reserva [Issue #07]</h3>
+                    <form id="form-reserva" class="elegant-form">
+                        <div class="input-group">
+                            <label for="dni">DNI del Huésped</label>
+                            <input type="text" id="dni" placeholder="Ej: 12345678">
+                        </div>
+                        <div class="input-group">
+                            <label for="habitacion">N° Habitación</label>
+                            <input type="text" id="habitacion" placeholder="Ej: 101">
+                        </div>
+                        <div class="input-group">
+                            <label for="fecha-in">Check-In</label>
+                            <input type="date" id="fecha-in">
+                        </div>
+                        <div class="input-group">
+                            <label for="fecha-out">Check-Out</label>
+                            <input type="date" id="fecha-out">
+                        </div>
+                        <button type="submit" class="btn-primary">Confirmar Reserva</button>
+                    </form>
+                    <div id="mensaje-sistema" class="mensaje"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
