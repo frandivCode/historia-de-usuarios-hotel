@@ -100,3 +100,30 @@ SistemaHotel.prototype.consultarDisponibilidad = function (fechaIn, fechaOut) {
 };
 
 /* === Integrante 3 === */
+
+SistemaHotel.prototype.crearReserva = function(dni, numHabitacion, fechaIn, fechaOut) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    const habitacion = this.habitaciones.find(h => h.numero === numHabitacion);
+
+    if (!huesped) throw new Error("Huésped no registrado.");
+    if (!habitacion || habitacion.estado !== 'Disponible') throw new Error("Habitación no disponible.");
+    if (new Date(fechaIn) < new Date().setHours(0,0,0,0)) throw new Error("La fecha debe ser futura.");
+
+    const noches = Math.ceil((new Date(fechaOut) - new Date(fechaIn)) / (1000 * 60 * 60 * 24));
+    const total = noches * habitacion.precioNoche;
+    const codigoReserva = `RES-${Date.now().toString().slice(-4)}`; 
+
+    const reserva = new Reserva(codigoReserva, huesped, habitacion, fechaIn, fechaOut, total);
+    this.reservas.push(reserva);
+    return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
+};
+
+SistemaHotel.prototype.cancelarReserva = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva) throw new Error("Reserva no encontrada.");
+    if (reserva.estado !== 'Confirmada') throw new Error("Solo se pueden cancelar reservas confirmadas.");
+    
+    reserva.estado = 'Cancelada';
+    reserva.habitacion.estado = 'Disponible';
+    return "Reserva cancelada correctamente.";
+};
