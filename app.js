@@ -100,3 +100,12 @@ SistemaHotel.prototype.consultarDisponibilidad = function (fechaIn, fechaOut) {
 };
 
 /* === Integrante 3 === */
+
+SistemaHotel.prototype.registrarCheckIn = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva || reserva.estado !== 'Confirmada') throw new Error("Reserva no válida para Check-in.");
+
+    reserva.estado = 'Activa';
+    reserva.habitacion.estado = 'Ocupada';
+    return `Check-in realizado a las ${new Date().toLocaleTimeString()}.`;
+};
