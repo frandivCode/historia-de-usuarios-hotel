@@ -118,6 +118,15 @@ SistemaHotel.prototype.crearReserva = function(dni, numHabitacion, fechaIn, fech
     return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
 };
 
+SistemaHotel.prototype.cancelarReserva = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva) throw new Error("Reserva no encontrada.");
+    if (reserva.estado !== 'Confirmada') throw new Error("Solo se pueden cancelar reservas confirmadas.");
+    
+    reserva.estado = 'Cancelada';
+    reserva.habitacion.estado = 'Disponible';
+    return "Reserva cancelada correctamente.";
+};
 cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
         const reservaActiva = this.reservas.find(r => r.habitacion.numero === numHabitacion && r.estado === 'Activa');
         if (!reservaActiva) throw new Error("No hay reservas activas en esta habitación.");
