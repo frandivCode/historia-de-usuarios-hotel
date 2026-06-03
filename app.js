@@ -109,3 +109,53 @@ SistemaHotel.prototype.registrarCheckIn = function(codigo) {
     reserva.habitacion.estado = 'Ocupada';
     return `Check-in realizado a las ${new Date().toLocaleTimeString()}.`;
 };
+SistemaHotel.prototype.crearReserva = function(dni, numHabitacion, fechaIn, fechaOut) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    const habitacion = this.habitaciones.find(h => h.numero === numHabitacion);
+
+    if (!huesped) throw new Error("Huésped no registrado.");
+    if (!habitacion || habitacion.estado !== 'Disponible') throw new Error("Habitación no disponible.");
+    if (new Date(fechaIn) < new Date().setHours(0,0,0,0)) throw new Error("La fecha debe ser futura.");
+
+    const noches = Math.ceil((new Date(fechaOut) - new Date(fechaIn)) / (1000 * 60 * 60 * 24));
+    const total = noches * habitacion.precioNoche;
+    const codigoReserva = `RES-${Date.now().toString().slice(-4)}`; 
+
+    const reserva = new Reserva(codigoReserva, huesped, habitacion, fechaIn, fechaOut, total);
+    this.reservas.push(reserva);
+    return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
+};
+
+SistemaHotel.prototype.cancelarReserva = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva) throw new Error("Reserva no encontrada.");
+    if (reserva.estado !== 'Confirmada') throw new Error("Solo se pueden cancelar reservas confirmadas.");
+    
+    reserva.estado = 'Cancelada';
+    reserva.habitacion.estado = 'Disponible';
+    return "Reserva cancelada correctamente.";
+};
+cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
+        const reservaActiva = this.reservas.find(r => r.habitacion.numero === numHabitacion && r.estado === 'Activa');
+        if (!reservaActiva) throw new Error("No hay reservas activas en esta habitación.");
+
+        const subtotal = cantidad * precioUnitario;
+        reservaActiva.consumosExtras.push({ producto, cantidad, subtotal });
+        return `Consumo cargado. Subtotal: $${subtotal}.`;
+    }
+
+    procesarCheckOut(codigo, metodoPago) {
+        const reserva = this.reservas.find(r => r.codigo === codigo);
+        if (!reserva || reserva.estado !== 'Activa') throw new Error("Reserva no válida para Check-Out.");
+        if (!metodoPago) throw new Error("Seleccione un método de pago.");
+
+        const totalExtras = reserva.consumosExtras.reduce((acc, item) => acc + item.subtotal, 0);
+        const totalFinal = reserva.totalEstadia + totalExtras;
+
+        reserva.estado = 'Finalizada';
+        reserva.habitacion.estado = 'Sucia';
+
+        this.facturacionMes.push({ fecha: new Date(), monto: totalFinal, metodo: metodoPago });
+
+        return `Factura generada con éxito. Total a cobrar: $${totalFinal} abonado con ${metodoPago}.`;
+    }
