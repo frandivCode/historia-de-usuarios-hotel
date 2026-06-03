@@ -43,3 +43,22 @@ function registrarHuesped(nombre, apellido, dni, email) {
     this.huespedes.push(nuevoHuesped);
     return "Huésped registrado exitosamente.";
 }
+
+// [Issue #07] - Creación de Reservas
+    crearReserva(dni, numHabitacion, fechaIn, fechaOut) {
+        const huesped = this.huespedes.find(h => h.dni === dni);
+        const habitacion = this.habitaciones.find(h => h.numero === numHabitacion);
+
+        if (!huesped) throw new Error("Huésped no registrado.");
+        if (!habitacion || habitacion.estado !== 'Disponible') throw new Error("Habitación no disponible.");
+        if (new Date(fechaIn) < new Date().setHours(0,0,0,0)) throw new Error("La fecha debe ser futura.");
+
+        // Cálculo simple de noches
+        const noches = Math.ceil((new Date(fechaOut) - new Date(fechaIn)) / (1000 * 60 * 60 * 24));
+        const total = noches * habitacion.precioNoche;
+        const codigoReserva = `RES-${Date.now().toString().slice(-4)}`; // Generador simple
+
+        const reserva = new Reserva(codigoReserva, huesped, habitacion, fechaIn, fechaOut, total);
+        this.reservas.push(reserva);
+        return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
+    }
