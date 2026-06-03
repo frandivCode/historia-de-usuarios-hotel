@@ -43,4 +43,24 @@ SistemaHotel.prototype.bajaHuesped = function (dni) {
 
     huesped.estado = 'Inactivo';
     return "Huésped dado de baja (lógica) exitosamente.";
+
+/* Integrante 1 */
+function registrarHuesped(nombre, apellido, dni, email) {
+    if (!nombre || !apellido || !dni || !email) throw new Error("Todos los campos son obligatorios.");
+    if (this.huespedes.some(h => h.dni === dni)) throw new Error("El documento ingresado ya se encuentra registrado.");
+    if (!email.includes('@')) throw new Error("Formato de correo inválido.");
+
+    const nuevoHuesped = new Huesped(nombre, apellido, dni, email);
+    this.huespedes.push(nuevoHuesped);
+    return "Huésped registrado exitosamente.";
+}
+
+SistemaHotel.prototype.modificarHuesped = function (dni, nuevosDatos) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    if (!huesped) throw new Error("Huésped no encontrado.");
+
+    if (nuevosDatos.nombre) huesped.nombre = nuevosDatos.nombre;
+    if (nuevosDatos.apellido) huesped.apellido = nuevosDatos.apellido;
+    if (nuevosDatos.email) huesped.email = nuevosDatos.email;
+    return "Datos del huésped actualizados correctamente.";
 };
