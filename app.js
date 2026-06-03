@@ -142,3 +142,15 @@ cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
 
         return `Factura generada con éxito. Total a cobrar: $${totalFinal} abonado con ${metodoPago}.`;
     }
+
+generarReporte(mes, anio) {
+        const transaccionesMes = this.facturacionMes.filter(f => {
+            return f.fecha.getMonth() + 1 === mes && f.fecha.getFullYear() === anio;
+        });
+
+        if (transaccionesMes.length === 0) return "No se registran transacciones para el mes seleccionado.";
+
+        const total = transaccionesMes.reduce((acc, t) => acc + t.monto, 0);
+        return `Reporte ${mes}/${anio} generado. Total recaudado: $${total}.`;
+    }
+
