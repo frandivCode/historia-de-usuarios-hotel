@@ -34,3 +34,12 @@ class Reserva {
 }
 
 // --- CLASE PRINCIPAL (GESTIÓN DE LOS ISSUES) ---
+SistemaHotel.prototype.modificarHuesped = function (dni, nuevosDatos) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    if (!huesped) throw new Error("Huésped no encontrado.");
+
+    if (nuevosDatos.nombre) huesped.nombre = nuevosDatos.nombre;
+    if (nuevosDatos.apellido) huesped.apellido = nuevosDatos.apellido;
+    if (nuevosDatos.email) huesped.email = nuevosDatos.email;
+    return "Datos del huésped actualizados correctamente.";
+};
