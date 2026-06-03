@@ -1,5 +1,19 @@
 // --- CLASES BASE ---
 
+const hotel = new SistemaHotel();
+
+hotel.huespedes.push(new Huesped("Juan", "Perez", "12345678", "juan@mail.com"));
+hotel.habitaciones.push(new Habitacion("101", "Doble", 15000, 1));
+
+class SistemaHotel {
+    constructor() {
+        this.huespedes = [];
+        this.habitaciones = [];
+        this.reservas = [];
+        this.facturacionMes = [];
+    }
+}
+
 class Huesped {
     constructor(nombre, apellido, dni, email) {
         this.nombre = nombre;
@@ -172,3 +186,23 @@ SistemaHotel.prototype.generarReporte = function(mes, anio) {
     const total = transaccionesMes.reduce((acc, t) => acc + t.monto, 0);
     return `Reporte ${mes}/${anio} generado. Total recaudado: $${total}.`;
 };
+
+// Conectamos el formulario
+document.getElementById('form-reserva').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const dni = document.getElementById('dni').value;
+    const hab = document.getElementById('habitacion').value;
+    const fIn = document.getElementById('fecha-in').value;
+    const fOut = document.getElementById('fecha-out').value;
+    const mensajeDiv = document.getElementById('mensaje-sistema');
+
+    try {
+        const resultado = hotel.crearReserva(dni, hab, fIn, fOut);
+        mensajeDiv.style.color = "#2e7d32"; 
+        mensajeDiv.textContent = resultado;
+    } catch (error) {
+        mensajeDiv.style.color = "#d9534f"; 
+        mensajeDiv.textContent = error.message;
+    }
+});
