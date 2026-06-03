@@ -34,6 +34,15 @@ class Reserva {
 }
 
 // --- CLASE PRINCIPAL (GESTIÓN DE LOS ISSUES) ---
+SistemaHotel.prototype.bajaHuesped = function (dni) {
+    const huesped = this.huespedes.find(h => h.dni === dni);
+    if (!huesped) throw new Error("Huésped no encontrado.");
+
+    const tieneReservasActivas = this.reservas.some(r => r.huesped.dni === dni && (r.estado === 'Confirmada' || r.estado === 'Activa'));
+    if (tieneReservasActivas) throw new Error("No se puede eliminar el huésped: Posee reservas o saldos activos.");
+
+    huesped.estado = 'Inactivo';
+    return "Huésped dado de baja (lógica) exitosamente.";
 
 /* Integrante 1 */
 function registrarHuesped(nombre, apellido, dni, email) {
