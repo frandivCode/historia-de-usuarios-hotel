@@ -73,3 +73,14 @@ altaHabitacion(numero, tipo, precio, piso) {
         this.habitaciones.push(new Habitacion(numero, tipo, precio, piso));
         return "Habitación creada.";
     }
+
+    cambiarEstadoHabitacion(numero, nuevoEstado) {
+        const hab = this.habitaciones.find(h => h.numero === numero);
+        if (!hab) throw new Error("Habitación no encontrada.");
+        
+        const estadosValidos = ['Disponible', 'Ocupada', 'Mantenimiento', 'Sucia'];
+        if (!estadosValidos.includes(nuevoEstado)) throw new Error("Estado inválido.");
+
+        hab.estado = nuevoEstado;
+        return `Estado de habitación ${numero} cambiado a ${nuevoEstado}.`;
+    }
