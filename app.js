@@ -135,27 +135,40 @@ SistemaHotel.prototype.cancelarReserva = function(codigo) {
     reserva.habitacion.estado = 'Disponible';
     return "Reserva cancelada correctamente.";
 };
-cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
-        const reservaActiva = this.reservas.find(r => r.habitacion.numero === numHabitacion && r.estado === 'Activa');
-        if (!reservaActiva) throw new Error("No hay reservas activas en esta habitación.");
 
-        const subtotal = cantidad * precioUnitario;
-        reservaActiva.consumosExtras.push({ producto, cantidad, subtotal });
-        return `Consumo cargado. Subtotal: $${subtotal}.`;
-    }
+//INtegrante 4
 
-    procesarCheckOut(codigo, metodoPago) {
-        const reserva = this.reservas.find(r => r.codigo === codigo);
-        if (!reserva || reserva.estado !== 'Activa') throw new Error("Reserva no válida para Check-Out.");
-        if (!metodoPago) throw new Error("Seleccione un método de pago.");
+SistemaHotel.prototype.registrarCheckIn = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva || reserva.estado !== 'Confirmada') throw new Error("Reserva no válida para Check-in.");
 
-        const totalExtras = reserva.consumosExtras.reduce((acc, item) => acc + item.subtotal, 0);
-        const totalFinal = reserva.totalEstadia + totalExtras;
+    reserva.estado = 'Activa';
+    reserva.habitacion.estado = 'Ocupada';
+    return Check-in realizado a las ${new Date().toLocaleTimeString()}.;
+};
 
-        reserva.estado = 'Finalizada';
-        reserva.habitacion.estado = 'Sucia';
+SistemaHotel.prototype.cargarConsumoExtra = function(numHabitacion, producto, cantidad, precioUnitario) {
+    const reservaActiva = this.reservas.find(r => r.habitacion.numero === numHabitacion && r.estado === 'Activa');
+    if (!reservaActiva) throw new Error("No hay reservas activas en esta habitación.");
 
-        this.facturacionMes.push({ fecha: new Date(), monto: totalFinal, metodo: metodoPago });
+    const subtotal = cantidad * precioUnitario;
+    reservaActiva.consumosExtras.push({ producto, cantidad, subtotal });
+    return Consumo cargado. Subtotal: $${subtotal}.;
+};
 
-        return `Factura generada con éxito. Total a cobrar: $${totalFinal} abonado con ${metodoPago}.`;
-    }
+SistemaHotel.prototype.procesarCheckOut = function(codigo, metodoPago) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva || reserva.estado !== 'Activa') throw new Error("Reserva no válida para Check-Out.");
+    if (!metodoPago) throw new Error("Seleccione un método de pago.");
+
+    const totalExtras = reserva.consumosExtras.reduce((acc, item) => acc + item.subtotal, 0);
+    const totalFinal = reserva.totalEstadia + totalExtras;
+
+    reserva.estado = 'Finalizada';
+    reserva.habitacion.estado = 'Sucia';
+
+    this.facturacionMes.push({ fecha: new Date(), monto: totalFinal, metodo: metodoPago });
+
+    return Factura generada con éxito. Total a cobrar: $${totalFinal} abonado con ${metodoPago}.;
+};
+
