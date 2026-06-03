@@ -64,3 +64,12 @@ SistemaHotel.prototype.modificarHuesped = function (dni, nuevosDatos) {
     if (nuevosDatos.email) huesped.email = nuevosDatos.email;
     return "Datos del huésped actualizados correctamente.";
 };
+
+altaHabitacion(numero, tipo, precio, piso) {
+        if (!numero || !tipo || !precio || !piso) throw new Error("Faltan datos de la habitación.");
+        if (this.habitaciones.some(h => h.numero === numero)) throw new Error("El número de habitación ya existe.");
+        if (precio <= 0) throw new Error("El precio debe ser mayor a cero.");
+
+        this.habitaciones.push(new Habitacion(numero, tipo, precio, piso));
+        return "Habitación creada.";
+    }
