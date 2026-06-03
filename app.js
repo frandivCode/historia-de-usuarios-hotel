@@ -101,6 +101,14 @@ SistemaHotel.prototype.consultarDisponibilidad = function (fechaIn, fechaOut) {
 
 /* === Integrante 3 === */
 
+SistemaHotel.prototype.registrarCheckIn = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva || reserva.estado !== 'Confirmada') throw new Error("Reserva no válida para Check-in.");
+
+    reserva.estado = 'Activa';
+    reserva.habitacion.estado = 'Ocupada';
+    return `Check-in realizado a las ${new Date().toLocaleTimeString()}.`;
+};
 SistemaHotel.prototype.crearReserva = function(dni, numHabitacion, fechaIn, fechaOut) {
     const huesped = this.huespedes.find(h => h.dni === dni);
     const habitacion = this.habitaciones.find(h => h.numero === numHabitacion);
@@ -118,6 +126,15 @@ SistemaHotel.prototype.crearReserva = function(dni, numHabitacion, fechaIn, fech
     return `Reserva ${codigoReserva} Confirmada. Total estimado: $${total}.`;
 };
 
+SistemaHotel.prototype.cancelarReserva = function(codigo) {
+    const reserva = this.reservas.find(r => r.codigo === codigo);
+    if (!reserva) throw new Error("Reserva no encontrada.");
+    if (reserva.estado !== 'Confirmada') throw new Error("Solo se pueden cancelar reservas confirmadas.");
+    
+    reserva.estado = 'Cancelada';
+    reserva.habitacion.estado = 'Disponible';
+    return "Reserva cancelada correctamente.";
+};
 cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
         const reservaActiva = this.reservas.find(r => r.habitacion.numero === numHabitacion && r.estado === 'Activa');
         if (!reservaActiva) throw new Error("No hay reservas activas en esta habitación.");
@@ -142,15 +159,3 @@ cargarConsumoExtra(numHabitacion, producto, cantidad, precioUnitario) {
 
         return `Factura generada con éxito. Total a cobrar: $${totalFinal} abonado con ${metodoPago}.`;
     }
-
-generarReporte(mes, anio) {
-        const transaccionesMes = this.facturacionMes.filter(f => {
-            return f.fecha.getMonth() + 1 === mes && f.fecha.getFullYear() === anio;
-        });
-
-        if (transaccionesMes.length === 0) return "No se registran transacciones para el mes seleccionado.";
-
-        const total = transaccionesMes.reduce((acc, t) => acc + t.monto, 0);
-        return `Reporte ${mes}/${anio} generado. Total recaudado: $${total}.`;
-    }
-
